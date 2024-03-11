@@ -1,0 +1,322 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+'Coded by: Ricardo Rodriguez
+'Project Start Date: 5/4/2011
+'Project Mod Date: 07/05/2016
+
+'Hook12,230(OES0201l-SAVE-BTN-HOOK)
+'Hook 11,870 (OES0200A-Pre-Save Hook)
+'This stop Order Entry from allowing promise date (So Lines), weekend and holidays, when is Hook 12,230
+'This stop Order Entry from allowing Due date (SO header), weekend and holidays, when is Hook 11,870
+
+V.Global.datePromDt.Declare(Date)
+
+' Check if Prom/Due Date exists
+F.Intrinsic.Control.If(V.Caller.Hook,=,"12230")
+	F.Intrinsic.Control.If(V.Passed.000011,=,00000000)
+		F.Intrinsic.UI.Msgbox("Change Prom Date (It needs to be valid)","Prom Date Verification")
+		V.Passed.777777.Set(1)
+		F.Intrinsic.Control.End
+	F.Intrinsic.Control.Else
+		F.Intrinsic.Date.ConvertDString(V.Passed.000011,"YYYYMMDD",V.Global.datePromDt)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.ElseIf(V.Caller.Hook,=,"11870")
+	F.Intrinsic.Control.If(V.Passed.000024,=,00000000)
+		F.Intrinsic.UI.Msgbox("Change Due Date (It needs to be valid)","Due Date Verification")
+		V.Passed.777777.Set(1)
+		F.Intrinsic.Control.End
+	F.Intrinsic.Control.Else
+		F.Intrinsic.Date.ConvertDString(V.Passed.000024,"YYYYMMDD",V.Global.datePromDt)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.Endif
+
+F.Intrinsic.Control.CallSub("Chk_Weekend")
+F.Intrinsic.Control.CallSub("Chk_Holidays")
+F.Intrinsic.Control.End
+
+
+
+Program.Sub.Main.End
+
+Program.Sub.Chk_Holidays.Start
+F.Intrinsic.Control.SetErrorHandler("Chk_Holidays_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+V.Local.sSql.Declare(String)
+V.Local.iFlag.Declare(Long)
+V.Local.dHoliday1.Declare(Date)
+V.Local.dHoliday2.Declare(Date)
+V.Local.dHoliday3.Declare(Date)
+V.Local.dHoliday4.Declare(Date)
+V.Local.dHoliday5.Declare(Date)
+V.Local.dHoliday6.Declare(Date)
+V.Local.dHoliday7.Declare(Date)
+V.Local.dHoliday8.Declare(Date)
+V.Local.dHoliday9.Declare(Date)
+V.Local.dHoliday10.Declare(Date)
+V.Local.dHoliday11.Declare(Date)
+V.Local.dHoliday12.Declare(Date)
+V.Local.dHoliday13.Declare(Date)
+V.Local.dHoliday14.Declare(Date)
+V.Local.dHoliday15.Declare(Date)
+V.Local.dHoliday16.Declare(Date)
+V.Local.dHoliday17.Declare(Date)
+V.Local.dHoliday18.Declare(Date)
+V.Local.dHoliday19.Declare(Date)
+V.Local.dHoliday20.Declare(Date)
+V.Local.dHoliday21.Declare(Date)
+V.Local.dHoliday22.Declare(Date)
+V.Local.dHoliday23.Declare(Date)
+V.Local.dHoliday24.Declare(Date)
+V.Local.dHoliday25.Declare(Date)
+V.Local.dHoliday26.Declare(Date)
+V.Local.dHoliday27.Declare(Date)
+V.Local.dHoliday28.Declare(Date)
+V.Local.dHoliday29.Declare(Date)
+V.Local.dHoliday30.Declare(Date)
+
+V.Local.iFlag.Set(0)
+
+F.ODBC.Connection!conx.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+V.Local.sSql.Set("Select * FROM V_Holiday_Sched")
+F.ODBC.connection!conx.OpenRecordsetRO("Result",V.Local.sSql)
+F.Intrinsic.Control.If(V.ODBC.conx!Result.EOF,=,"False")
+	V.Local.dHoliday1.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_1)
+	V.Local.dHoliday2.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_2)
+	V.Local.dHoliday3.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_3)
+	V.Local.dHoliday4.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_4)
+	V.Local.dHoliday5.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_5)
+	V.Local.dHoliday6.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_6)
+	V.Local.dHoliday7.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_7)
+	V.Local.dHoliday8.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_8)
+	V.Local.dHoliday9.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_9)
+	V.Local.dHoliday10.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_10)
+	V.Local.dHoliday11.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_11)
+	V.Local.dHoliday12.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_12)
+	V.Local.dHoliday13.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_13)
+	V.Local.dHoliday14.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_14)
+	V.Local.dHoliday15.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_15)
+	V.Local.dHoliday16.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_16)
+	V.Local.dHoliday17.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_17)
+	V.Local.dHoliday18.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_18)
+	V.Local.dHoliday19.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_19)
+	V.Local.dHoliday20.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_20)
+	V.Local.dHoliday21.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_21)
+	V.Local.dHoliday22.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_22)
+	V.Local.dHoliday23.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_23)
+	V.Local.dHoliday24.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_24)
+	V.Local.dHoliday25.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_25)
+	V.Local.dHoliday26.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_26)
+	V.Local.dHoliday27.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_27)
+	V.Local.dHoliday28.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_28)
+	V.Local.dHoliday29.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_29)
+	V.Local.dHoliday30.Set(V.ODBC.conx!Result.FieldVal!HOLIDAY_30)
+F.Intrinsic.Control.EndIf
+F.ODBC.conx!Result.Close
+F.ODBC.Connection!conx.Close
+
+' Compare Prom Date with Each Holiday 1-30
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday1)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday2)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday3)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday4)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday5)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday6)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday7)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday8)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday9)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday10)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday11)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday12)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday13)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday14)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday15)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday16)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday17)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday18)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday19)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday20)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday21)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday22)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday23)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday24)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday25)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday26)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday27)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday28)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday29)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Global.datePromDt,=,V.Local.dHoliday30)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Local.iFlag,=,1)
+	V.Passed.777777.Set(1)
+	F.Intrinsic.Control.If(V.Caller.Hook,=,"12230")
+		F.Intrinsic.UI.Msgbox("Change Prom Date (It's a Holiday)","Prom Date Verification")
+	F.Intrinsic.Control.ElseIf(V.Caller.Hook,=,"11870")
+		F.Intrinsic.UI.Msgbox("Change Due Date (It's a Holiday)","Due Date Verification")
+	F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndIf
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Chk_Holidays_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GAB_4147_PromDate_SOLinesFilter.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.Chk_Holidays.End
+
+Program.Sub.Chk_Weekend.Start
+F.Intrinsic.Control.SetErrorHandler("Chk_Weekend_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+V.Local.iWeekday.Declare(Long)
+V.Local.iFlag.Declare(Long)
+V.Local.iFlag.Set(0)
+
+' Convert Prom/Due Date to day number
+F.Intrinsic.Date.Weekday(V.Global.datePromDt,V.Local.iWeekday)
+' Check if Prom/Due Date is Sunday
+F.Intrinsic.Control.If(V.Local.iWeekday,=,1)
+	V.Local.iFlag.Set(1)
+F.Intrinsic.Control.Else
+'Check if Prom/Due Date is Saturday
+	F.Intrinsic.Control.If(V.Local.iWeekday,=,7)
+		V.Local.iFlag.Set(2)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.EndIf
+
+'Process Flag for Saturday and Sunday
+F.Intrinsic.Control.If(V.Local.iFlag,=,1)
+	V.Passed.777777.Set(1)
+	F.Intrinsic.Control.If(V.Caller.Hook,=,"12230")
+		F.Intrinsic.UI.Msgbox("Change Prom Date (It's Sunday)","Prom Date Verification")
+	F.Intrinsic.Control.ElseIf(V.Caller.Hook,=,"11870")
+		F.Intrinsic.UI.Msgbox("Change Due Date (It's Sunday)","Due Date Verification")
+	F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.If(V.Local.iFlag,=,2)
+	V.Passed.777777.Set(1)
+	F.Intrinsic.Control.If(V.Caller.Hook,=,"12230")
+		F.Intrinsic.UI.Msgbox("Change Prom Date (It's Saturday)","Prom Date Verification")
+	F.Intrinsic.Control.ElseIf(V.Caller.Hook,=,"11870")
+		F.Intrinsic.UI.Msgbox("Change Due Date (It's Saturday)","Due Date Verification")
+	F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndIf
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Chk_Weekend_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GAB_4147_PromDate_SOLinesFilter.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.Chk_Weekend.End
+
+
